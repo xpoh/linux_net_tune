@@ -15,6 +15,8 @@
 # - Kernel buffer
 # - The network layer (IP, TCP or UDP)
 
+echo "$1"
+
 # CPU
  apt install cpufrequtils
  cpufreq-set -g performance
@@ -33,25 +35,25 @@ echo options ixgbe IntMode=2,2  RSS=6,6  VMDQ=0,0 InterruptThrottleRate=1,1 allo
 modprobe ixgbe
 
 # Отключение контроля перегрузок
-ethtool -K eno1 lro off
+ethtool -K "$1" lro off
 
 # Отключение системное управление прерываний и передаем контроль NAPI.
-ethtool -C eno1 adaptive-rx off
+ethtool -C "$1" adaptive-rx off
 
 # Узнать максимальные размеры буфера
 echo "max buffers:"
-ethtool -g eno1
+ethtool -g "$1"
 
 # Установить максимальные размеры буферов на прием, передачу
-ethtool -G eno1 rx 4096
-ethtool -G eno1 tx 4096
+ethtool -G "$1" rx 4096
+ethtool -G "$1" tx 4096
 
 # Размер очереди пакетов
-ip link set eno1 txqueuelen 10000
+ip link set "$1" txqueuelen 10000
 
 # Привязка прерываний к одному cpu
 lscpu | grep numa0
-./set_irq_affinity.sh 0-23,48-71 eno1
+./set_irq_affinity.sh 0-23,48-71 "$1"
 
 # остановить демон балансировки
 service irqbalance stop
