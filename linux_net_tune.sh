@@ -51,7 +51,7 @@ ip link set eno1 txqueuelen 10000
 
 # Привязка прерываний к одному cpu
 lscpu | grep numa0
-set_irq_affinity 0-23,48-71 eno1
+./set_irq_affinity.sh 0-23,48-71 eno1
 
 # остановить демон балансировки
 service irqbalance stop
